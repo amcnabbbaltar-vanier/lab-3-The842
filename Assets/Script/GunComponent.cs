@@ -11,9 +11,26 @@ public class GunComponent : MonoBehaviour
 
    void Update()
    {
+
+    //Button is released
     if (Input.GetButtonUp("Fire1"))
     {
         shootBullet();
+        isCharging = false;
+    }
+
+    //Button is pressed
+    if (Input.GetButtonDown("Fire1"))
+    {
+        chargeTime = 0.0f;
+        isCharging = true;
+    }
+
+    //Button is held
+    if (Input.GetButton("Fire1"))
+    {
+        chargeTime +=  Time.deltaTime;
+        chargeTime = Mathf.Clamp(chargeTime, 0, maxChargeTime);
     }
    }
 
@@ -22,7 +39,7 @@ public class GunComponent : MonoBehaviour
     GameObject bullet = Instantiate(bulletPrefab, bulletSpawnPoint.position, bulletSpawnPoint.rotation);
     Rigidbody rb = bullet.GetComponent<Rigidbody>();
 
-    float bulletImpulse = bulletMaxImpulse;
+    float bulletImpulse = (chargeTime / maxChargeTime) * bulletMaxImpulse;
 
     rb.AddForce(bulletSpawnPoint.forward * bulletImpulse, ForceMode.Impulse);
    }
